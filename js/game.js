@@ -4,9 +4,24 @@
 
 const vertexShaderSource = `
 attribute vec4 a_position;
+uniform float u_rotation; // radians
+uniform vec2 u_translation; 
+uniform vec2 u_scale;
 
 void main() {
-  gl_Position = a_position;
+    // scale
+    float x0 = a_position.x * u_scale.x;
+    float y0 = a_position.y * u_scale.y;
+
+    // rotate
+    float x = x0 * cos(u_rotation) - y0 * sin(u_rotation);
+    float y = x0 * sin(u_rotation) + y0 * cos(u_rotation);
+
+    // translate
+    x = x + u_translation.x;
+    y = y + u_translation.y;
+
+    gl_Position = vec4(x,y,0,1);
 }
 `;
 
@@ -84,14 +99,19 @@ function main() {
     const program =  createProgram(gl, vertexShader, fragmentShader);
     gl.useProgram(program);
 
+
+    // Initialise the shader attributes & uniforms
+    const positionAttribute = gl.getAttribLocation(program, "a_position");
+    const rotationUniform = gl.getUniformLocation(program, "u_rotation");
+    const translationUniform = gl.getUniformLocation(program, "u_translation");
+    const scaleUniform = gl.getUniformLocation(program, "u_scale");
+
     // Initialise the array buffer
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-
-    const positionAttribute = gl.getAttribLocation(program, "a_position");
     gl.enableVertexAttribArray(positionAttribute);
     gl.vertexAttribPointer(positionAttribute, 2, gl.FLOAT, false, 0, 0);
-
+    
     // === Per Frame operations ===
 
     // update objects in the scene
@@ -106,7 +126,15 @@ function main() {
         gl.clearColor(0, 0, 0, 1);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
-        // draw things
+        // set the uniforms
+
+        gl.uniform1f(rotationUniform, 0);
+        gl.uniform2f(translationUniform, 0, 0);
+        gl.uniform2f(scaleUniform, 1, 1);
+
+        // draw the shape
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0,0,1,0,0,1]), gl.STATIC_DRAW);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);   
     };
 
     // animation loop
