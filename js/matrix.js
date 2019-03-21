@@ -23,7 +23,7 @@ class Matrix {
     // The identity matrix
     static identity() {
         return new Float32Array([ 
-            // fill this in
+            1,0,0,  0,1,0,  0,0,1
         ]);
     }
 
