@@ -1,57 +1,66 @@
 "use strict";
 
+/**
+ * Input manager.
+ * 
+ * This class listens for keydown and keyup events to keep track of whether the arrow keys are currently pressed.
+ * 
+ * Usage:
+ * 
+ * if (Input.leftPressed) {
+ *     // the left arrow is pressed
+ * }
+ */
+
 class Input {
-    constructor() {
-        this.leftPressed = false;
-        this.rightPressed = false;
-        this.upPressed = false;
-        this.downPress = false;
 
-        document.addEventListener("keydown", this.onKeyDown.bind(this));
-        document.addEventListener("keyup", this.onKeyUp.bind(this));
-    }
+    static leftPressed = false;
+    static rightPressed = false;
+    static upPressed = false;
+    static downPressed = false;
 
-    onKeyDown(event) {
+    static onKeyDown(event) {
         switch (event.key) {
             case "ArrowLeft": 
-                this.leftPressed = true;
+                Input.leftPressed = true;
                 break;
 
             case "ArrowRight": 
-                this.rightPressed = true;
+                Input.rightPressed = true;
                 break;
 
             case "ArrowDown":
-                this.downPressed = true;
+                Input.downPressed = true;
                 break;
 
             case "ArrowUp":
-                this.upPressed = true;
+                Input.upPressed = true;
                 break;
         }
     }
 
-    onKeyUp(event) {
+    static onKeyUp(event) {
         switch (event.key) {
             case "ArrowLeft": 
-                this.leftPressed = false;
+                Input.leftPressed = false;
                 break;
 
             case "ArrowRight": 
-                this.rightPressed = false;
+                Input.rightPressed = false;
                 break;
 
             case "ArrowDown":
-                this.downPressed = false;
+                Input.downPressed = false;
                 break;
 
             case "ArrowUp":
-                this.upPressed = false;
+                Input.upPressed = false;
                 break;
         }
     }
 }
 
-// global inputManager variable
+// listen for keydown and keyup events
 
-const inputManager = new Input();
+document.addEventListener("keydown", Input.onKeyDown);
+document.addEventListener("keyup", Input.onKeyUp);
