@@ -102,6 +102,9 @@ const isShader = newCheck(function (s) {
 const isBuffer = newCheck(function (b) {
     return s instanceof WebGLBuffer;
 });
+const isUniformLocation = newCheck(function (b) {
+    return s instanceof WebGLUniformLocation;
+});
 
 // glMatrix
 const isVec2 = newCheck(function (v) {
