@@ -34,6 +34,8 @@ void main() {
 `;
 
 function createShader(gl, type, source) {
+    check(isContext(gl), isString(source));
+
     const shader = gl.createShader(type);
     gl.shaderSource(shader, source);
     gl.compileShader(shader);
@@ -48,6 +50,8 @@ function createShader(gl, type, source) {
 }
 
 function createProgram(gl, vertexShader, fragmentShader) {
+    check(isContext(gl), isShader(vertexShader, fragmentShader));
+
     const program = gl.createProgram();
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);
@@ -63,6 +67,8 @@ function createProgram(gl, vertexShader, fragmentShader) {
 }
 
  function resize(canvas) {
+    check(isCanvas(canvas));
+
     const resolution = window.devicePixelRatio || 1.0;
 
     const displayWidth = 
@@ -116,6 +122,8 @@ function main() {
 
     // update objects in the scene
     let update = function(deltaTime) {
+        check(isNumber(deltaTime));
+
         // update things
     };
 
@@ -139,6 +147,8 @@ function main() {
     // animation loop
     let oldTime = 0;
     let animate = function(time) {
+        check(isNumber(time));
+        
         time = time / 1000;
         let deltaTime = time - oldTime;
         oldTime = time;
