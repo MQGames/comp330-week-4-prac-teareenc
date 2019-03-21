@@ -127,10 +127,9 @@ function main() {
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         // set the uniforms
-
-        gl.uniform1f(rotationUniform, 0);
-        gl.uniform2f(translationUniform, 0, 0);
-        gl.uniform2f(scaleUniform, 1, 1);
+        gl.uniform2f(translationUniform, -0.5, 0);          // translate left by 0.5 units
+        gl.uniform1f(rotationUniform, 45 * Math.PI / 180);  // rotate by 45 degrees (converted to radians)
+        gl.uniform2f(scaleUniform, 0.5, 0.5);               // scale down by 0.5
 
         // draw the shape
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0,0,1,0,0,1]), gl.STATIC_DRAW);
