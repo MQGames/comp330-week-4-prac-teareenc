@@ -2,7 +2,7 @@
 
 class Matrix {
 
-    // NOTE: matrices are written in homogeneous coordinates, in column order: [i0, i1, 0, j0, j1, j2, 0, P0, P1, 1]
+    // NOTE: matrices are written in homogeneous coordinates, in column order: [i0, i1, 0, j0, j1, j2, 0, T0, T1, 1]
 
     // Matrices are represented as Float32Arrays for ease of passing to GLSL
     // See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array
