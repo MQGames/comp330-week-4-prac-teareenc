@@ -41,7 +41,7 @@ class Matrix {
         check(isNumber(angle));
 
         return new Float32Array([
-            // fill this is
+            // fill this in
         ]);
     }
 
