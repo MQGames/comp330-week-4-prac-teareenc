@@ -33,6 +33,7 @@ class Matrix {
 
         return new Float32Array([
             // fill this in
+			1,0,0, 0,1,0, dx,dy,1
         ]);
     }
 
@@ -42,6 +43,7 @@ class Matrix {
 
         return new Float32Array([
             // fill this in
+			Math.cos(angle), Math.sin(angle),0, -Math.sin(angle), Math.cos(angle),0, 0,0,1
         ]);
     }
 
@@ -50,9 +52,19 @@ class Matrix {
         check(isNumber(sx, sy));
 
         return new Float32Array([
-            // fill this in
+            //fill this in
+			sx,0,0, 0,sy,0, 0,0,1
         ]);
     }
+	
+	// Translate Rotate and Scale
+	static trs(dx, dy, angle, sx, sy) {
+		check(isNumber(dx, dy, angle, sx, sy));
+		
+		return new Float32Array([
+			Math.cos(angle)*sx, Math.sin(angle)*sx,0, -Math.sin(angle)*sy, Math.cos(angle)*sy,0, dx,dy,1
+		]);
+	}
 
     // Multiply two matrices and return the result
     static multiply(a, b) {

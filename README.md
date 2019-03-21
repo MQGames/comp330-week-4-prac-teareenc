@@ -7,4 +7,4 @@ Files
         game.js         Framework for game
         input.js        Input manager
         matrix.js       Matrix library
-        debugging.js    Debugging libray
+        debugging.js    Debugging library

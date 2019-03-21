@@ -4,24 +4,14 @@
 
 const vertexShaderSource = `
 attribute vec4 a_position;
-uniform float u_rotation; // radians
-uniform vec2 u_translation; 
-uniform vec2 u_scale;
-
+uniform mat3 u_worldMatrix;
 void main() {
-    // scale
-    float x0 = a_position.x * u_scale.x;
-    float y0 = a_position.y * u_scale.y;
-
-    // rotate
-    float x = x0 * cos(u_rotation) - y0 * sin(u_rotation);
-    float y = x0 * sin(u_rotation) + y0 * cos(u_rotation);
-
-    // translate
-    x = x + u_translation.x;
-    y = y + u_translation.y;
-
-    gl_Position = vec4(x,y,0,1);
+ // convert to homogeneous coordinates
+ vec3 p = vec3(a_position.xy, 1);
+ // multiply by world martix
+ p = u_worldMatrix * p;
+// output to gl_Position
+ gl_Position = vec4(p.xy, 0, 1);
 }
 `;
 
@@ -108,9 +98,7 @@ function main() {
 
     // Initialise the shader attributes & uniforms
     const positionAttribute = gl.getAttribLocation(program, "a_position");
-    const rotationUniform = gl.getUniformLocation(program, "u_rotation");
-    const translationUniform = gl.getUniformLocation(program, "u_translation");
-    const scaleUniform = gl.getUniformLocation(program, "u_scale");
+    let worldMatrixUniform = gl.getUniformLocation(program, "u_worldMatrix");
 
     // Initialise the array buffer
     const positionBuffer = gl.createBuffer();
@@ -135,9 +123,12 @@ function main() {
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         // set the uniforms
-        gl.uniform2f(translationUniform, -0.5, 0);          // translate left by 0.5 units
-        gl.uniform1f(rotationUniform, 45 * Math.PI / 180);  // rotate by 45 degrees (converted to radians)
-        gl.uniform2f(scaleUniform, 0.5, 0.5);               // scale down by 0.5
+		let matrix = Matrix.identity();
+		matrix = Matrix.multiply(matrix, Matrix.translation(-0.5,0));
+		matrix = Matrix.multiply(matrix, Matrix.rotation(45 * Math.PI / 180));
+		matrix = Matrix.multiply(matrix, Matrix.scale(0.5, 0.5));
+
+		gl.uniformMatrix3fv(worldMatrixUniform, false, matrix);
 
         // draw the shape
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0,0,1,0,0,1]), gl.STATIC_DRAW);
