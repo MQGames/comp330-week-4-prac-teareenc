@@ -100,10 +100,10 @@ const isShader = newCheck(function (s) {
     return s instanceof WebGLShader;
 });
 const isBuffer = newCheck(function (b) {
-    return s instanceof WebGLBuffer;
+    return b instanceof WebGLBuffer;
 });
-const isUniformLocation = newCheck(function (b) {
-    return s instanceof WebGLUniformLocation;
+const isUniformLocation = newCheck(function (u) {
+    return u instanceof WebGLUniformLocation;
 });
 
 // glMatrix
