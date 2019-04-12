@@ -5,21 +5,29 @@
 const vertexShaderSource = `
 attribute vec4 a_position;
 uniform mat3 u_worldMatrix;
+uniform mat3 u_viewMatrix;
+
 void main() {
- // convert to homogeneous coordinates
- vec3 p = vec3(a_position.xy, 1);
- // multiply by world martix
- p = u_worldMatrix * p;
-// output to gl_Position
- gl_Position = vec4(p.xy, 0, 1);
+	// convert to homogeneous coordinates
+	vec3 p = vec3(a_position.xy, 1);
+	
+	// multiply by world martix
+	p = u_worldMatrix * p;
+	
+	//multiply by view matrix
+	pos = u_viewMatrix * pos;
+	
+	// output to gl_Position
+	gl_Position = vec4(p.xy, 0, 1);
 }
 `;
 
 const fragmentShaderSource = `
 precision mediump float;
+uniform vec4 u_colour;
 
 void main() {
-  gl_FragColor = vec4(1,0,0,1); 
+  gl_FragColor = u_colour; 
 }
 `;
 
@@ -79,7 +87,8 @@ function createProgram(gl, vertexShader, fragmentShader) {
 function main() {
 
     // === Initialisation ===
-
+	const resolution = 50; //pixels/world unit
+	
     // get the canvas element & gl rendering 
     const canvas = document.getElementById("c");
     const gl = canvas.getContext("webgl");
@@ -98,7 +107,10 @@ function main() {
 
     // Initialise the shader attributes & uniforms
     const positionAttribute = gl.getAttribLocation(program, "a_position");
-    let worldMatrixUniform = gl.getUniformLocation(program, "u_worldMatrix");
+    const worldMatrixUniform = gl.getUniformLocation(program, "u_worldMatrix");
+	const viewMatrixUniform = gl.getUniformLocation(program, "u_viewMatrix");
+	const colourUniform = gl.getUniformLocation(program, "u_colour");
+
 
     // Initialise the array buffer
     const positionBuffer = gl.createBuffer();
@@ -112,8 +124,11 @@ function main() {
     let update = function(deltaTime) {
         check(isNumber(deltaTime));
 
-        // update things
+        // update the snake
+		snake.update(deltaTime);
     };
+	
+	const snake = new Snake();
 
     // redraw the scene
     let render = function() {
@@ -121,6 +136,16 @@ function main() {
         gl.viewport(0, 0, canvas.width, canvas.height);        
         gl.clearColor(0, 0, 0, 1);
         gl.clear(gl.COLOR_BUFFER_BIT);
+		
+		console.log("help");
+		
+		//scale the view matrix to the canvas size
+		const sx = 2 * resolution / canvas.width;
+		const sy = 2 * resolution / canvas.height;
+		const viewMatrix = Matrix.scale(sx,sy);
+		gl.uniformMatrix3fv(viewMatrixUniform, false, viewMatrix);
+		
+		snake.render(gl, worldMatrixUniform, colourUniform);
 
         // set the uniforms
 		let matrix = Matrix.identity();
