@@ -5,20 +5,13 @@
 const vertexShaderSource = `
 attribute vec4 a_position;
 uniform mat3 u_worldMatrix;
-uniform mat3 u_viewMatrix;
-
 void main() {
-	// convert to homogeneous coordinates
-	vec3 p = vec3(a_position.xy, 1);
-	
-	// multiply by world martix
-	p = u_worldMatrix * p;
-	
-	//multiply by view matrix
-	pos = u_viewMatrix * pos;
-	
-	// output to gl_Position
-	gl_Position = vec4(p.xy, 0, 1);
+ // convert to homogeneous coordinates
+ vec3 p = vec3(a_position.xy, 1);
+ // multiply by world martix
+ p = u_worldMatrix * p;
+// output to gl_Position
+ gl_Position = vec4(p.xy, 0, 1);
 }
 `;
 
@@ -85,7 +78,8 @@ function createProgram(gl, vertexShader, fragmentShader) {
 }
 
 function main() {
-
+	
+	console.log("help");
     // === Initialisation ===
 	const resolution = 50; //pixels/world unit
 	
@@ -106,8 +100,8 @@ function main() {
 
 
     // Initialise the shader attributes & uniforms
-    const positionAttribute = gl.getAttribLocation(program, "a_position");
-    const worldMatrixUniform = gl.getUniformLocation(program, "u_worldMatrix");
+    let positionAttribute =  gl.getAttribLocation(program, "a_position");
+	let worldMatrixUniform =  gl.getUniformLocation(program, "u_worldMatrix");
 	const viewMatrixUniform = gl.getUniformLocation(program, "u_viewMatrix");
 	const colourUniform = gl.getUniformLocation(program, "u_colour");
 
@@ -145,19 +139,20 @@ function main() {
 		const viewMatrix = Matrix.scale(sx,sy);
 		gl.uniformMatrix3fv(viewMatrixUniform, false, viewMatrix);
 		
-		snake.render(gl, worldMatrixUniform, colourUniform);
-
         // set the uniforms
 		let matrix = Matrix.identity();
+		gl.uniformMatrix3fv(worldMatrixUniform, false, matrix);
+		
 		matrix = Matrix.multiply(matrix, Matrix.translation(-0.5,0));
 		matrix = Matrix.multiply(matrix, Matrix.rotation(45 * Math.PI / 180));
 		matrix = Matrix.multiply(matrix, Matrix.scale(0.5, 0.5));
 
-		gl.uniformMatrix3fv(worldMatrixUniform, false, matrix);
-
-        // draw the shape
+		// draw the shape
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0,0,1,0,0,1]), gl.STATIC_DRAW);
-        gl.drawArrays(gl.TRIANGLES, 0, 3);   
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+		
+		// draw the snake
+		snake.render(gl, worldMatrixUniform, colourUniform);		
     };
 
     // animation loop
